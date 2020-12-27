@@ -20,10 +20,12 @@ const program = require('commander');
 
 const dir_src = './src';
 const dir_tests = './tests';
+const dir_stories = './stories'
 
 let show_start = false;
 let show_test = false;
 let es5 = false;
+let no_webpack = false;
 
 function read(name) {
   return fs.readFileSync(path.resolve(__dirname + '/cli-templates', name), 'utf8');
@@ -54,8 +56,11 @@ function init() {
   if (!fs.existsSync(dir_src)) fs.mkdirSync(dir_src);
 
   console.log(' * Installing packages. This might take a few minutes.');
-  execSync('npm install apprun webpack webpack-cli webpack-dev-server ts-loader typescript source-map-loader --save-dev');
-  if (es5) execSync('npm install apprun@es5 --save');
+  if (!no_webpack) {
+    execSync('npm install webpack webpack-cli webpack-dev-server ts-loader source-map-loader --save-dev');
+  }
+  if (!es5) execSync('npm install apprun typescript --save-dev');
+  else execSync('npm install apprun@es5 typescript --save-dev');
 
   es5 ?
     write(tsconfig_json, read('tsconfig.es5.json'), ' * Configuring typescript - es5', true) :
@@ -74,6 +79,9 @@ function init() {
   }
   if (!package_info.scripts['build']) {
     package_info["scripts"]["build"] = 'webpack --mode production';
+  }
+  if (!package_info.scripts['tsc:watch']) {
+    package_info['scripts']['tsc:watch'] = 'tsc -w';
   }
   save_package_json(package_info);
   git_init();
@@ -99,6 +107,7 @@ function git_init() {
 }
 
 function component(name) {
+  if (!fs.existsSync(dir_src)) fs.mkdirSync(dir_src);
   const fn = path.resolve(dir_src + '/' + name + '.tsx');
   const component_template = read('component.ts_');
   write(fn, component_template.replace(/\#name/g, name),
@@ -142,6 +151,14 @@ function component_spec(name) {
   show_test = true;
 }
 
+function component_story(name) {
+  if (!fs.existsSync(dir_stories)) fs.mkdirSync(dir_stories);
+  const fn = path.resolve(dir_stories + '/' + name + '.stories.js');
+  const story_template = read('stories.js_');
+  write(fn, story_template.replace(/\#name/g, name),
+    `Creating component stories ${name}`);
+}
+
 function spa() {
   write(spa_index, read('spa_index.html'), 'Creating', true);
   write(spa_main_tsx, read('spa_main.ts_'), 'Creating', true);
@@ -153,35 +170,38 @@ function spa() {
 }
 
 program
-  .name('create-apprun-app')
-  .version('1.0')
+  .name('apprun')
+  .version('2.27')
   .option('-i, --init', 'Initialize AppRun Project')
   .option('-c, --component <file>', 'Generate AppRun component')
   .option('-g, --git', 'Initialize git repository')
   .option('-j, --jest', 'Install jest')
   .option('-l, --lint', 'Install ESLint')
   .option('-t, --test <file>', 'Generate component spec')
+  .option('-o, --story <file>', 'Generate component stories')
   .option('-s, --spa', 'Generate SPA app')
   .option('-5, --es5', 'Use apprun@es5')
-  .option('-?, --help', 'Help')
+  .option('-0, --no_webpack', 'Don\'t install webpack')
   .parse(process.argv);
 
-program._name = 'create-apprun-app';
+program._name = 'apprun';
 
 if (!program.init && !program.component && !program.git && !program.jest &&
-  !program.test && !program.spa && !program.help) {
-  init();
+  !program.test && !program.spa && !program.lint && !program.story) {
+  program.outputHelp();
+  process.exit()
 }
 
 if (program.es5) es5 = true;
+if (program.no_webpack) no_webpack = true;
 if (program.init) init();
 if (program.component) component(program.component);
 if (program.git) git_init();
 if (program.jest) jest_init();
 if (program.lint) lint_init();
 if (program.test) component_spec(program.test);
+if (program.story) component_story(program.story);
 if (program.spa) spa();
-if (program.help) outputHelp();
 
 console.log('\r');
 if (show_start) console.log('All done. You can run `npm start` and then navigate to http://localhost:8080 in a browser.');
