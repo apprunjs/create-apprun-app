@@ -35,7 +35,7 @@ async function main() {
     name: 'template',
     message: 'Select a template',
     choices: ['HTML/JS', 'HTML/JS - Web Component', 'JS/TS - Blank App', 'JS/TS - Signle Page App'],
-    initial: 2,
+    initial: 3,
   }], { onCancel: () => process.exit(1) })).template;
 
   let options = {};
@@ -50,14 +50,14 @@ async function main() {
           choices: ['esbuild', 'webpack'],
           initial: 0,
         },
-        {
-          type: 'toggle',
-          name: 'jest',
-          message: 'Add Jest?',
-          initial: true,
-          active: 'Yes',
-          inactive: 'No'
-        }
+        // {
+        //   type: 'toggle',
+        //   name: 'jest',
+        //   message: 'Add Jest?',
+        //   initial: true,
+        //   active: 'Yes',
+        //   inactive: 'No'
+        // }
       ], { onCancel: () => process.exit(1) }
     ));
   }

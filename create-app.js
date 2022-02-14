@@ -2,93 +2,60 @@ const fs = require('fs-extra');
 const path = require('path');
 const execSync = require('child_process').execSync;
 
-module.exports = function ({ destination, template, options, git }) {
+module.exports = function ({ destination, template, options }) {
 
   RegExp.prototype.toJSON = RegExp.prototype.toString;
 
   const source = path.resolve(__dirname, `cli-templates/${template}`);
   fs.copySync(source, destination);
 
-/*
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+  if (template > 1) {
+    const package_json = path.resolve(destination, 'package.json');
+    if (!fs.existsSync(package_json)) {
+      console.log(' * Creating package.json');
+      execSync('npm init -y', { cwd: destination });
+    }
 
-  const package_json = path.resolve(cwd, 'package.json');
-  const tsconfig_json = path.resolve(cwd, 'tsconfig.json');
-  const webpack_config_js = path.resolve(cwd, 'webpack.config.js');
-  const git_ignore_file = path.resolve(cwd, '.gitignore');
-  const eslint_file = path.resolve(cwd, '.eslintrc.js');
-  const index_html = path.resolve(cwd, 'public/index.html');
-  const index_cdn_html = path.resolve(cwd, 'index.html');
-  const main_js = path.resolve(cwd, 'dist/main.js');
-  const main_tsx = path.resolve(cwd, 'src/main.tsx');
-  const spa_index = path.resolve(cwd, 'public/index.html');
-  const spa_main_tsx = path.resolve(cwd, 'src/main.tsx');
-  const spa_layout_tsx = path.resolve(cwd, 'src/Layout.tsx');
-  const readme_md = path.resolve(cwd, 'README.md');
+    if (options.compiler === 0 /* esbuild */) {
+      console.log(' * Installing esbuild');
+      execSync('npm install -D apprun apprun-dev-server esbuild', { cwd: destination });
+    } else if (options.compiler === 1 /* webpack */) {
+      console.log(' * Installing webpack');
+      execSync('npm install -D apprun typescript webpack webpack-cli webpack-dev-server ts-loader source-map-loader', { cwd: destination });
+    }
 
-  const dir_src = path.resolve(cwd, 'src');
-  const dir_tests = path.resolve(cwd, 'tests');
-  const dir_stories = path.resolve(cwd, 'stories')
+    const package_info = require(package_json);
+    if (!package_info.scripts) package_info["scripts"] = {}
+    if (options.compiler === 0 /* esbuild */) {
+      fs.copySync(path.resolve(__dirname, 'cli-templates/_build.js'), `${destination}/_build.js`);
+      if (!package_info.scripts['start']) {
+        package_info["scripts"]["start"] = 'node _build start';
+      }
+      if (!package_info.scripts['build']) {
+        package_info["scripts"]["build"] = 'node _build';
+      }
+    } else if (options.compiler === 1 /* webpack */) {
+      fs.copySync(path.resolve(__dirname, 'cli-templates/webpack.config.js'), `${destination}/webpack.config.js`);
+      if (!package_info.scripts['start']) {
+        package_info["scripts"]["start"] = 'webpack serve --mode development';
+      }
+      if (!package_info.scripts['build']) {
+        package_info["scripts"]["build"] = 'webpack --mode production';
+      }
+    }
+    fs.writeFileSync(package_json, JSON.stringify(package_info, null, 2));
+    fs.copySync(path.resolve(__dirname, 'cli-templates/readme.md'), `${destination}/readme.md`);
 
-  function read(name) {
-    return fs.readFileSync(path.resolve(__dirname + '/cli-templates', name), 'utf8');
   }
 
-  function write(file_name, text, title = ' * Creating', overwrite = false) {
-    const file = path.resolve(file_name);
-    const dirname = path.dirname(file_name);
-    if (!fs.existsSync(dirname)) fs.mkdirSync(dirname);
-
-    if (!fs.existsSync(file) || overwrite) {
-      process.stdout.write(`${title}: ${file} ... `);
-      fs.writeFileSync(
-        file,
-        text
-      );
-      process.stdout.write('Done\n');
+  if (options.git) {
+    if (!fs.existsSync(path.resolve(destination, '.git'))) {
+      console.log(' * Initializing git');
+      execSync('git init', { cwd: destination });
+      fs.copySync(path.resolve(__dirname, 'cli-templates/.gitignore'), `${destination}/.gitignore`);
     } else {
-      process.stdout.write(` *  No change made. File exists: ${file}\n`);
+      console.log(' * Skip git init. .git exsits');
     }
   }
-
-  function component(name) {
-    const fn = path.resolve(dir_src + '/' + name + '.tsx');
-    const component_template = read('component.ts_');
-    write(fn, component_template.replace(/\#name/g, name),
-      `Creating component ${name}`);
-  }
-
-  if (template === 0) {
-    console.log(' * Creating HTML');
-    write(index_cdn_html, read('index.html'));
-    write(main_js, read('main.js'));
-  } else if (template === 1) {
-    // Blank App
-    console.log(' * Creating blank app');
-    write(index_html, read('index.html'));
-    write(main_tsx, read('main.ts_'));
-    write(readme_md, read('readme.md'));
-
-  } else if (template === 2) {
-    // Single Page App
-    console.log(' * Creating single page app');
-
-    write(spa_index, read('spa_index.html'), 'Creating', true);
-    write(spa_main_tsx, read('spa_main.ts_'), 'Creating', true);
-    write(spa_layout_tsx, read('Layout.ts_'), 'Creating', true);
-    component('Home');
-    component('About');
-    component('Contact');
-    write(readme_md, read('readme.md'));
-  }
-
-*/
-
-  // if (options.compiler === 'esbuild') {
-  //   console.log(' * Installing esbuild');
-  //   execSync('npm i esbuild --save-dev');
-  // } else if (options.compiler === 'webpack') {
-  // }
-
 
 }
