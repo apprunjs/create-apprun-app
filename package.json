@@ -1,14 +1,14 @@
 {
   "name": "create-apprun-app",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "CLI to create an apprun app",
   "main": "index.js",
-  "scripts": {
-  },
+  "bin": "cli.js",
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "commander": "^6.2.0"
+    "prompts": "^2.4.2"
   }
 }

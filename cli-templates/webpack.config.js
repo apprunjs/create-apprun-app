@@ -5,7 +5,7 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname)
+    path: path.resolve('public')
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js']

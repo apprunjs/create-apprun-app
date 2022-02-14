@@ -5,9 +5,13 @@ This is a CLI for creating [AppRun](https://github.com/yysun/apprun) apps.
 Run
 
 ```
-npx create-apprun-app
+npx create-apprun-app [my-app]
 ```
 or
 ```
-npm init create-apprun-app
+npm init apprun-app [my-app]
+```
+or
+```
+yarn create apprun-app [my-app]
 ```
