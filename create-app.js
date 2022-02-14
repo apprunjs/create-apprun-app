@@ -1,12 +1,15 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const execSync = require('child_process').execSync;
 
-module.exports = function ({ cwd, template, options, git }) {
+module.exports = function ({ destination, template, options, git }) {
 
   RegExp.prototype.toJSON = RegExp.prototype.toString;
 
-  const dir = path.resolve(cwd);
+  const source = path.resolve(__dirname, `cli-templates/${template}`);
+  fs.copySync(source, destination);
+
+/*
   if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
   const package_json = path.resolve(cwd, 'package.json');
@@ -79,12 +82,13 @@ module.exports = function ({ cwd, template, options, git }) {
     write(readme_md, read('readme.md'));
   }
 
-
+*/
 
   // if (options.compiler === 'esbuild') {
   //   console.log(' * Installing esbuild');
   //   execSync('npm i esbuild --save-dev');
   // } else if (options.compiler === 'webpack') {
   // }
+
 
 }

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
+const path = require('path');
 const prompts = require('prompts')
 
 async function main() {
@@ -11,23 +13,35 @@ async function main() {
       name: 'cwd',
       message: 'Please enter the directory of the app (leave blank to use current directory)'
     }]);
-
-    if (opts.cwd) cwd = opts.cwd;
   }
 
-  let options = {};
+  const destination = path.resolve(cwd);
+
+  if (fs.existsSync(destination)) {
+    if (fs.readdirSync(destination).length > 0) {
+      const response = await prompts({
+        type: 'confirm',
+        name: 'value',
+        message: 'Directory not empty. Continue?',
+        initial: false
+      });
+      if (!response.value) process.exit(1);
+    }
+  }
+
 
   const template = (await prompts([{
     type: 'select',
     name: 'template',
     message: 'Select a template',
-    choices: ['HTML/JS', 'Blank App', 'Signle Page App'],
+    choices: ['HTML/JS', 'HTML/JS - Web Component', 'JS/TS - Blank App', 'JS/TS - Signle Page App'],
     initial: 2,
-  }])).template;
+  }], { onCancel: () => process.exit(1) })).template;
 
+  let options = {};
 
-  if (template !== 0) {
-    const options = (await prompts(
+  if (template > 1) {
+    options = (await prompts(
       [
         {
           type: 'select',
@@ -44,20 +58,20 @@ async function main() {
           active: 'Yes',
           inactive: 'No'
         }
-      ]
+      ], { onCancel: () => process.exit(1) }
     ));
   }
 
-  const git = (await prompts([{
+  options.git = (await prompts([{
     type: 'toggle',
     name: 'git',
     message: 'Add git repo?',
     initial: true,
     active: 'Yes',
     inactive: 'No'
-  }])).git;
+  }], { onCancel: () => process.exit(1) })).git;
 
-  require('./create-app')({ cwd, template, options, git });
+  require('./create-app')({ destination, template, options });
 }
 
 main().catch(e => console.error(e));
