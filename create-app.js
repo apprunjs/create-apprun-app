@@ -52,7 +52,7 @@ module.exports = function ({ destination, template, options }) {
     if (!fs.existsSync(path.resolve(destination, '.git'))) {
       console.log(' * Initializing git');
       execSync('git init', { cwd: destination });
-      fs.copySync(path.resolve(__dirname, 'cli-templates/.gitignore'), `${destination}/.gitignore`);
+      fs.copySync(path.resolve(__dirname, 'cli-templates/_gitignore'), `${destination}/.gitignore`);
     } else {
       console.log(' * Skip git init. .git exsits');
     }
