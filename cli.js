@@ -34,13 +34,19 @@ async function main() {
     type: 'select',
     name: 'template',
     message: 'Select a template',
-    choices: ['HTML/JS', 'HTML/JS - Web Component', 'JS/TS - Blank App', 'JS/TS - Signle Page App'],
-    initial: 3,
+    choices: [
+      'HTML/JS',
+      'HTML/JS - Web Component',
+      'Blank App',
+      'Signle Page App',
+      'AppRun Site (default)',
+    ],
+    initial: 4,
   }], { onCancel: () => process.exit(1) })).template;
 
   let options = {};
 
-  if (template > 1) {
+  if (template > 1 && template < 4) {
     options = (await prompts(
       [
         {
