@@ -26,6 +26,9 @@ module.exports = function ({ destination, template, options }) {
     } else if (options.compiler === 1 /* webpack */) {
       console.log(' * Installing webpack');
       execSync('npm install -D apprun typescript webpack webpack-cli webpack-dev-server ts-loader source-map-loader', { cwd: destination });
+    } else if (options.compiler === 2 /* vite */) {
+      console.log(' * Installing vite');
+      execSync('npm install -D apprun vite', { cwd: destination });
     } else if (options.compiler === 9 /* apprun-site */) {
       console.log(' * Installing AppRun Site');
       execSync('npm install -D apprun apprun-site', { cwd: destination });
@@ -49,6 +52,14 @@ module.exports = function ({ destination, template, options }) {
       if (!package_info.scripts['build']) {
         package_info["scripts"]["build"] = 'webpack --mode production';
       }
+    } else if (options.compiler === 2 /* vite */) {
+      if (!package_info.scripts['start']) {
+        package_info["scripts"]["start"] = 'vite dev --port 8080';
+      }
+      if (!package_info.scripts['build']) {
+        package_info["scripts"]["build"] = 'vite build --outDir public';
+      }
+      fs.removeSync(path.resolve(destination, 'public'));
     } else if (options.compiler === 9 /* apprun-site */) {
       package_info.type = 'module';
       if (!package_info.scripts['start']) {
@@ -63,9 +74,15 @@ module.exports = function ({ destination, template, options }) {
       }
     }
 
+    if (options.jest) {
+      console.log(' * Installing jest');
+      execSync('npm install -D jest ts-jest', { cwd: destination });
+      package_info["scripts"]["test"] = 'jest';
+      fs.copySync(path.resolve(__dirname, 'cli-templates/jest.config.js'), `${destination}/jest.config.js`);
+    }
+
     fs.writeFileSync(package_json, JSON.stringify(package_info, null, 2));
     fs.copySync(path.resolve(__dirname, 'cli-templates/readme.md'), `${destination}/readme.md`);
-
   }
 
   if (options.git) {

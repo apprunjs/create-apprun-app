@@ -53,19 +53,21 @@ async function main() {
           type: 'select',
           name: 'compiler',
           message: 'Select a compiler',
-          choices: ['esbuild', 'webpack'],
-          initial: 0,
+          choices: ['esbuild', 'webpack', 'vite'],
+          initial: 2,
         },
-        // {
-        //   type: 'toggle',
-        //   name: 'jest',
-        //   message: 'Add Jest?',
-        //   initial: true,
-        //   active: 'Yes',
-        //   inactive: 'No'
-        // }
       ], { onCancel: () => process.exit(1) }
     ));
+  }
+  if (template > 1) {
+    options.jest = (await prompts([{
+      type: 'toggle',
+      name: 'jest',
+      message: 'Add Jest?',
+      initial: false,
+      active: 'Yes',
+      inactive: 'No'
+    }], { onCancel: () => process.exit(1) })).jest;
   }
 
   options.git = (await prompts([{
