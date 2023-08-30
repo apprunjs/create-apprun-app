@@ -13,6 +13,7 @@ async function main() {
       name: 'cwd',
       message: 'Please enter the directory of the app (leave blank to use current directory)'
     }]);
+    cwd = opts.cwd;
   }
 
   const destination = path.resolve(cwd);
