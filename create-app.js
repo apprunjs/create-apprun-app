@@ -5,7 +5,8 @@ const execSync = require('child_process').execSync;
 
 module.exports = function ({ destination, template, options }) {
 
-  RegExp.prototype.toJSON = RegExp.prototype.toString;
+
+  // RegExp.prototype.toJSON = RegExp.prototype.toString;
 
   const source = path.resolve(__dirname, `cli-templates/${template}`);
   fs.copySync(source, destination);
@@ -22,7 +23,7 @@ module.exports = function ({ destination, template, options }) {
 
     if (options.compiler === 0 /* esbuild */) {
       console.log(' * Installing esbuild');
-      execSync('npm install -D apprun apprun-dev-server esbuild', { cwd: destination });
+      execSync('npm install -D apprun esbuild', { cwd: destination });
     } else if (options.compiler === 1 /* webpack */) {
       console.log(' * Installing webpack');
       execSync('npm install -D apprun typescript webpack webpack-cli webpack-dev-server ts-loader source-map-loader', { cwd: destination });
@@ -37,12 +38,12 @@ module.exports = function ({ destination, template, options }) {
     const package_info = require(package_json);
     if (!package_info.scripts) package_info["scripts"] = {}
     if (options.compiler === 0 /* esbuild */) {
-      fs.copySync(path.resolve(__dirname, 'cli-templates/_build.js'), `${destination}/_build.js`);
+
       if (!package_info.scripts['start']) {
-        package_info["scripts"]["start"] = 'node _build start';
+        package_info["scripts"]["start"] = 'esbuild src/main.tsx --outfile=public/dist/main.js --bundle --watch --servedir=public';
       }
       if (!package_info.scripts['build']) {
-        package_info["scripts"]["build"] = 'node _build';
+        package_info["scripts"]["build"] = 'esbuild src/main.tsx --outfile=public/dist/main.js --bundle --minify';
       }
     } else if (options.compiler === 1 /* webpack */) {
       fs.copySync(path.resolve(__dirname, 'cli-templates/webpack.config.js'), `${destination}/webpack.config.js`);
