@@ -64,7 +64,7 @@ module.exports = function ({ destination, template, options }) {
     } else if (options.compiler === 9 /* apprun-site */) {
       package_info.type = 'module';
       if (!package_info.scripts['start']) {
-        package_info["scripts"]["start"] = 'apprun-site dev';
+        package_info["scripts"]["start"] = 'apprun-site serve';
       }
       if (!package_info.scripts['dev']) {
         package_info["scripts"]["dev"] = 'apprun-site dev';

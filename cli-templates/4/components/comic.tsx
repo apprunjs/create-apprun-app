@@ -1,9 +1,9 @@
 import { app, Component } from 'apprun';
 export default class Comic extends Component {
   state = async () => {
-    const response = await fetch('https://xkcd-imgs.herokuapp.com/');
-    const comic = await response.json();
-    return { comic };
+    const response = await fetch('/api/comic');
+    return response.json();
   }
-  view = state => state.comic ? <img src={state.comic.url} /> : `Loading...`;
+
+  view = ({ img }) => img ? <img src={img} /> : `Loading...`;
 }
