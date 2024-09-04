@@ -7,6 +7,7 @@ module.exports = function ({ destination, template, options }) {
 
 
   // RegExp.prototype.toJSON = RegExp.prototype.toString;
+  fs.copySync(path.resolve(__dirname, 'cli-templates/readme.md'), `${destination}/readme.md`);
 
   const source = path.resolve(__dirname, `cli-templates/${template}`);
   fs.copySync(source, destination);
@@ -32,7 +33,7 @@ module.exports = function ({ destination, template, options }) {
       execSync('npm install -D apprun vite', { cwd: destination });
     } else if (options.compiler === 9 /* apprun-site */) {
       console.log(' * Installing AppRun Site');
-      execSync('npm install -D apprun apprun-site', { cwd: destination });
+      execSync('npm install apprun apprun-site postcss tailwindcss autoprefixer', { cwd: destination });
     }
 
     const package_info = require(package_json);
@@ -64,14 +65,13 @@ module.exports = function ({ destination, template, options }) {
     } else if (options.compiler === 9 /* apprun-site */) {
       package_info.type = 'module';
       if (!package_info.scripts['start']) {
-        package_info["scripts"]["start"] = 'apprun-site serve';
+        package_info["scripts"]["start"] = 'node ./server.js';
       }
       if (!package_info.scripts['dev']) {
         package_info["scripts"]["dev"] = 'apprun-site dev';
       }
       if (!package_info.scripts['build']) {
-        package_info["scripts"]["build"] = 'apprun-site build';
-        package_info["scripts"]["render"] = 'apprun-site build -c -r';
+        package_info["scripts"]["build"] = 'apprun-site build -c';
       }
     }
 
@@ -83,7 +83,6 @@ module.exports = function ({ destination, template, options }) {
     }
 
     fs.writeFileSync(package_json, JSON.stringify(package_info, null, 2));
-    fs.copySync(path.resolve(__dirname, 'cli-templates/readme.md'), `${destination}/readme.md`);
   }
 
   if (options.git) {
