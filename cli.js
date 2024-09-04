@@ -60,6 +60,18 @@ async function main() {
       ], { onCancel: () => process.exit(1) }
     ));
   }
+
+  if (template === 4) {
+    options.jest = (await prompts([{
+      type: 'toggle',
+      name: 'tailwindcss',
+      message: 'Add PostCSS and Tailwind?',
+      initial: false,
+      active: 'Yes',
+      inactive: 'No'
+    }], { onCancel: () => process.exit(1) })).tailwindcss;
+  }
+
   if (template > 1) {
     options.jest = (await prompts([{
       type: 'toggle',

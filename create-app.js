@@ -33,7 +33,15 @@ module.exports = function ({ destination, template, options }) {
       execSync('npm install -D apprun vite', { cwd: destination });
     } else if (options.compiler === 9 /* apprun-site */) {
       console.log(' * Installing AppRun Site');
-      execSync('npm install apprun apprun-site postcss tailwindcss autoprefixer', { cwd: destination });
+
+      execSync('npm install apprun apprun-site', { cwd: destination });
+      if (options.tailwindcss) {
+        console.log(' * Installing PostCSS and Tailwind');
+        execSync('npm install postcss tailwindcss autoprefixer', { cwd: destination });
+      } else {
+        fs.unlinkSync(path.resolve(destination, 'postcss.config.cjs'));
+        fs.unlinkSync(path.resolve(destination, 'tailwind.config.cjs'));
+      }
     }
 
     const package_info = require(package_json);
