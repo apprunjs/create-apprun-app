@@ -1,6 +1,6 @@
 {
   "name": "create-apprun-app",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "CLI to create an apprun app",
   "main": "index.js",
   "bin": "cli.js",
