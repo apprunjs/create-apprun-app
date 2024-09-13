@@ -87,7 +87,7 @@ module.exports = function ({ destination, template, options }) {
       console.log(' * Installing jest');
       execSync('npm install -D jest ts-jest', { cwd: destination });
       package_info["scripts"]["test"] = 'jest';
-      fs.copySync(path.resolve(__dirname, 'cli-templates/jest.config.js'), `${destination}/jest.config.js`);
+      execSync('npx jest --init', { cwd: destination, stdio: 'inherit', shell: true });
     }
 
     fs.writeFileSync(package_json, JSON.stringify(package_info, null, 2));
