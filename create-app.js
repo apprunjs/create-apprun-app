@@ -39,8 +39,8 @@ module.exports = function ({ destination, template, options }) {
         console.log(' * Installing PostCSS and Tailwind');
         execSync('npm install postcss tailwindcss autoprefixer', { cwd: destination });
       } else {
-        fs.unlinkSync(path.resolve(destination, 'postcss.config.cjs'));
-        fs.unlinkSync(path.resolve(destination, 'tailwind.config.cjs'));
+        fs.unlinkSync(path.resolve(destination, 'postcss.config.js'));
+        fs.unlinkSync(path.resolve(destination, 'tailwind.config.js'));
       }
     }
 
@@ -73,13 +73,13 @@ module.exports = function ({ destination, template, options }) {
     } else if (options.compiler === 9 /* apprun-site */) {
       package_info.type = 'module';
       if (!package_info.scripts['start']) {
-        package_info["scripts"]["start"] = 'node ./server.js';
+        package_info["scripts"]["start"] = 'node --watch --watch-path=pages server.js';
       }
       if (!package_info.scripts['dev']) {
         package_info["scripts"]["dev"] = 'apprun-site dev';
       }
       if (!package_info.scripts['build']) {
-        package_info["scripts"]["build"] = 'apprun-site build -c';
+        package_info["scripts"]["build"] = 'apprun-site build -c -r';
       }
     }
 
@@ -105,6 +105,7 @@ module.exports = function ({ destination, template, options }) {
   console.log('\nProject created in: ', destination);
 
   console.log('Please go to the project directory and run:')
+  console.log('\n\tnpm run build')
   console.log('\n\tnpm start\n')
   console.log('And then, you can visit the project at: http://localhost:8080\n');
 }

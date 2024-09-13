@@ -39,10 +39,10 @@ async function main() {
       'HTML/JS',
       'HTML/JS - Web Component',
       'Blank App',
-      'Signle Page App (default)',
-      'AppRun Site',
+      'Signle Page App',
+      'AppRun Site (default)',
     ],
-    initial: 3,
+    initial: 4,
   }], { onCancel: () => process.exit(1) })).template;
 
   let options = {};

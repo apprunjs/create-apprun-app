@@ -1,6 +1,6 @@
 import app from 'apprun';
 
-const main_element = 'my-app';
+const main_element = 'main-app';
 const nav = [
   {
     "text": "Home",
@@ -17,9 +17,6 @@ const nav = [
 ];
 
 export default () => {
-
-  window['app-element'] = 'my-app';
-
   return <>
     <div class="d-flex vh-100">
       <main class="flex-grow-1">

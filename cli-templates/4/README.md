@@ -1,9 +1,11 @@
 ## My AppRun Site
 
-This site is built with [AppRun-Site](https://github.com/yysun/apprun-site), a tool for building modern web applications with [AppRun](https://github.com/yysun/apprun).
+This site is built with [AppRun-Site](https://github.com/yysun/apprun-site).
 
 It has the following structure:
 ```
+/_                  <- backend code
+  /comic.js         <- demo action
 /api                <- backend code
   /comic.js         <- demo API
 /pages              <- fronet end code
