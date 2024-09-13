@@ -4,5 +4,5 @@ import Comic from './components/comic';
 
 export default () => {
   app.webComponent('ws-comic', Comic);
-  app.render(document.body, <Layout />);
+  app.render(document.getElementById('root'), <Layout />);
 }
