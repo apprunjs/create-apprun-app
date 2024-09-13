@@ -62,7 +62,7 @@ async function main() {
   }
 
   if (template === 4) {
-    options.jest = (await prompts([{
+    options.tailwindcss = (await prompts([{
       type: 'toggle',
       name: 'tailwindcss',
       message: 'Add PostCSS and Tailwind?',
